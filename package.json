@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/401-advanced-javascript-tia/auth-server#readme",
   "dependencies": {
+    "@code-fellows/supergoose": "^1.0.10",
     "base-64": "^0.1.0",
     "bcrypt": "^5.0.0",
     "cors": "^2.8.5",

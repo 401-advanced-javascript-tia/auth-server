@@ -12,7 +12,7 @@ const error500 = require('./middleware/500.js');
 app.use(express.json());
 
 
-app.use(routes);
+app.use('/api/v1/', routes);
 
 
 app.use('*', error404);

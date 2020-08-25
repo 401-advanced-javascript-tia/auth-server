@@ -4,6 +4,7 @@ const express = require('express');
 const router = express.Router();
 const basicAuth = require('./middleware/basic.js');
 const usersModel = require('./models/users-model.js');
+const { SSL_OP_ALLOW_UNSAFE_LEGACY_RENEGOTIATION } = require('constants');
 
 
 // ---------------- ROUTES -------------------
@@ -21,8 +22,16 @@ function handleSignup(req, res, next) {
 // save it, create new record in Mongo db
 // response to send status code 200
 
-  usersModel.save(req.body)
+  console.log('IM IN HANDLESIGNUP!!!');
+
+  const newUser = new usersModel();
+
+  console.log('REQ.BODY IN HANDLESIGNUP:', req.body);
+
+
+  newUser.save(req.body)
     .then(user => {
+      console.log('USER IN .THEN IN HANDLESIGNUP:', user);
       res.status(200).send('Successful save.');
     }).catch(next);
 

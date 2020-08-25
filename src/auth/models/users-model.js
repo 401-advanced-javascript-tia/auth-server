@@ -14,6 +14,7 @@ const users = new mongoose.Schema({
   role: {type: String, required: true, default: 'user', enum: ['admin', 'editor', 'writer', 'user']},
 });
 
+// username="tlow" password="PaSSwOr$" email="lowtia@gmail.com" fullname="tia low" role="writer"
 
 // HOW TO MODIFY USER INSTANCE BEFORE SAVING??
 // PASSWORD, WHEN IT MAKES IT INTO DATABASE, IS IN SAFE FORM. NO RAW PASSWORDS INTO DB.
