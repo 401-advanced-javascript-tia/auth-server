@@ -16,7 +16,8 @@ const error500 = require('./middleware/500.js');
 app.use(express.json());
 
 
-app.use('/', routes);
+// DO WE NEED '/' IN HERE?
+app.use(routes);
 
 
 app.use('*', error404);

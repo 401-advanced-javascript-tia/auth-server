@@ -1,6 +1,7 @@
 # Auth-Server
 Code 401 Lab 11-14 Project
-**Description**: 
+**Description**
+Four-day build out of an authentication server.
 
 ## See the Site
 IF SITE IS PUBLISHED PUT THE LINK HERE
@@ -29,7 +30,7 @@ ALL TECH GOES HERE IN LIST FORMAT
 - GITHUB_CLIENT_SECRET=
 
 ## Domain Modeling
-- MongoDB name: products
+- MongoDB name: users
 
 ## Daily Log
 Monday : 8-24-20 : **Phase 1** : **Basic Authentication**
