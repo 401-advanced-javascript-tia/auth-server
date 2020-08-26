@@ -13,10 +13,10 @@ Full-stack JavaScript developer with a diverse background of personal and profes
 
 ## Collaborations and Resources
 - Joshua Beasley : [GitHub](https://github.com/beasleyDOTcom)
-
+- Alex Whan: [GitHub](https://github.com/alex-whan)
 
 ## Version
-1.0.1
+1.1.2
 
 ## Tech Used
 ALL TECH GOES HERE IN LIST FORMAT

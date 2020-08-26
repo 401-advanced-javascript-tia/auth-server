@@ -22,7 +22,7 @@ router.get('/users', getAllUsers);
 
 function handleSignup(req, res, next) {
 
-  // console.log('IM IN HANDLESIGNUP!!!');
+  // console.log('BOOYAH IM IN HANDLESIGNUP!!!');
 
   const newUser = new usersModel(req.body);
 
