@@ -1,12 +1,3 @@
-// 'use strict';
-
-// require('@code-fellows/supergoose');
-
-// const auth = require('../src/auth/middleware/basic.js');
-// const Users = require('../src/auth/models/users-model.js');
-
-// beforeEach from screenshot, add 'email' and any other fields needed
-
 'use strict';
 
 const supergoose = require('@code-fellows/supergoose');
@@ -23,7 +14,7 @@ beforeEach(async (done) => {
 
 describe('Auth Middleware', () => {
 
-  let errorObject = {'message': 'Invalid User ID/Password', 'status': 401, 'statusMessage': 'Unauthorized'};
+  // let errorObject = {'message': 'Invalid User ID/Password', 'status': 401, 'statusMessage': 'Unauthorized'};
 
   describe('user authentication', () => {
 
