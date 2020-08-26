@@ -43,13 +43,16 @@ users.statics.authenticateBasic = function (username, password) {
 
 // its a .method becuase were talking about something tied to a particular user
 users.methods.comparePassword = function(plainPassword) {
+
+  console.log('PLAIN PASSWORD IN COMPAREPASSWORD FUNCTION IN USERS-MODEL', plainPassword);
+  
   return bcrypt.compare(plainPassword, this.password)
     .then(validBoolean => validBoolean? this : null)
     .catch(console.error);
 };
 
-//YOU CAN HAVE FUNCTIONS THAT ARE ATTACHED PER INSTANCE AS METHODS, OR YOU CAN HAVE METHODS ATTACHED OVERALL, WHICH ARE STATIC, AS ABOVE
-users.methods.generateToken = function(user) {
+// STATIC METHOD, BUT IT TAKES IN THE ARGUMENT FOR ONE USER 
+users.statics.generateToken = function(user) {
 
   let token = jwt.sign({ username: user.username }, process.env.SECRET);
   return token;

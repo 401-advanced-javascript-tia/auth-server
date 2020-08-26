@@ -8,11 +8,17 @@ const error404 = require('./middleware/404.js');
 const error500 = require('./middleware/500.js');
 
 
+//DO WE WANT THIS IN PUBLIC FOLDER? INDEX.HTML IN PUBLIC FOLDER 
+app.use(express.static('./public'));
+
+
+
+
 // the below steps in front of all requests, inspects it for body, parses as needed and includes it on the request. turns fragmented body into json format
 app.use(express.json());
 
 
-app.use('/api/v1/', routes);
+app.use('/', routes);
 
 
 app.use('*', error404);

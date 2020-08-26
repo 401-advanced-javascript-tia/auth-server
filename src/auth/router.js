@@ -3,8 +3,9 @@
 const express = require('express');
 const router = express.Router();
 const basicAuth = require('./middleware/basic.js');
+// const oauth = require('./middleware/oauth.js');
+
 const usersModel = require('./models/users-model.js');
-const { SSL_OP_ALLOW_UNSAFE_LEGACY_RENEGOTIATION } = require('constants');
 
 
 // ---------------- ROUTES -------------------
@@ -13,26 +14,25 @@ router.post('/signin', basicAuth, handleSignin);
 // basicAuth is middleware
 router.get('/users', getAllUsers);
 
+// router.get('/oauth', oauth, handleOauth);
+
 
 
 // ---------------- ROUTE HANDLERS ------------
 
 function handleSignup(req, res, next) {
-// create new User
-// save it, create new record in Mongo db
-// response to send status code 200
 
-  console.log('IM IN HANDLESIGNUP!!!');
+  // console.log('IM IN HANDLESIGNUP!!!');
 
-  const newUser = new usersModel();
+  const newUser = new usersModel(req.body);
 
-  console.log('REQ.BODY IN HANDLESIGNUP:', req.body);
+  // console.log('REQ.BODY IN HANDLESIGNUP:', req.body);
 
 
   newUser.save(req.body)
     .then(user => {
       console.log('USER IN .THEN IN HANDLESIGNUP:', user);
-      res.status(200).send('Successful save.');
+      res.status(200).json(user);
     }).catch(next);
 
 }
@@ -43,7 +43,7 @@ function handleSignin(req, res, next) {
   // the middleware does some things and its usually attached to the request (when the middleware function itself tells it to carry on)
   res.cookie('auth', req.token);
   
-  res.send({
+  res.status(200).json({
     token: req.token,
     user: req.user,
   });

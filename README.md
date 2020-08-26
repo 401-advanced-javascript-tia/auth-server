@@ -25,6 +25,8 @@ ALL TECH GOES HERE IN LIST FORMAT
 - PORT=
 - MONGODB_URI=
 - SECRET=
+- GITHUB_CLIENT_ID=
+- GITHUB_CLIENT_SECRET=
 
 ## Domain Modeling
 - MongoDB name: products
