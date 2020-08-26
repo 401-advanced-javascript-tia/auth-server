@@ -28,35 +28,66 @@ users.pre('save', async function() {
 
 // STATIC ATTACHMENT
 // the definiton of the function is below, and its being called in basic.js in middleware
-users.statics.authenticateBasic = function (username, password) {
+users.statics.authenticateBasic = async function (username, password) {
 
   let query = { username };
   // is the same as = {username:username}
   // hey collection, do you even have anyone by this username??
   // go look for this user query and then user coming back will either be the one they found, and if user doesnt exist then it will come back as null
-  return this.findOne(query)
-    .then(user => user && user.comparePassword(password))
-  // the above, if user comes back truthy then compare the password
-    .catch(console.error);
+  // return this.findOne(query)
+  //   .then(user => user && user.comparePassword(password))
+  // // the above, if user comes back truthy then compare the password
+  //   .catch(console.error);
+
+
+  const user = await this.findOne(query);
+  return user && await user.comparePassword(password);
 
 };
 
 // its a .method becuase were talking about something tied to a particular user
-users.methods.comparePassword = function(plainPassword) {
+users.methods.comparePassword = async function(plainPassword) {
 
-  console.log('PLAIN PASSWORD IN COMPAREPASSWORD FUNCTION IN USERS-MODEL', plainPassword);
-  
-  return bcrypt.compare(plainPassword, this.password)
-    .then(validBoolean => validBoolean? this : null)
-    .catch(console.error);
+  console.log('PLAIN PASSWORD IN COMPAREPASSWORD FUNCTION IN USERS-MODEL.JS:', plainPassword);
+
+  const passwordMatch = await bcrypt.compare(plainPassword, this.password);
+  return passwordMatch ? this : null;
+
 };
 
-// STATIC METHOD, BUT IT TAKES IN THE ARGUMENT FOR ONE USER 
-users.statics.generateToken = function(user) {
 
-  let token = jwt.sign({ username: user.username }, process.env.SECRET);
+users.methods.generateToken = function() {
+
+  const payload = {
+    username: this.username,
+    id: this._id,
+    role: this.role,
+  };
+
+  const token = jwt.sign(payload, process.env.SECRET);
+  console.log('TOKEN IN GENERATETOKEN METHOD:', token);
   return token;
+  // we're testing this by using the verify (jwt.verify) method 
 
+};
+
+users.statics.createFromOauth = async function(email) {
+
+  if(!email){
+    // throw new Error('Validation Error');
+    return Promise.reject('Validation Error');
+  }
+
+  const query = {email};
+  const user = await this.findOne(query);
+  // return user ? user : null;
+
+  if (user) {
+    return user;
+  } else {
+    return this.create({username: email, password: 'none', email: email});
+    // .create method does a save under the hood so it hits the save hook above on the way
+  }
 };
 
 

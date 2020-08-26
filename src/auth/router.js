@@ -21,20 +21,24 @@ router.get('/oauth', oauthMW, handleOAuth);
 
 // ---------------- ROUTE HANDLERS ------------
 
-function handleSignup(req, res, next) {
+async function handleSignup(req, res, next) {
 
   // console.log('BOOYAH IM IN HANDLESIGNUP!!!');
 
-  const newUser = new usersModel(req.body);
+  const newUser = await usersModel.create(req.body);
 
   // console.log('REQ.BODY IN HANDLESIGNUP:', req.body);
 
+  const token = newUser.generateToken();
 
-  newUser.save(req.body)
-    .then(user => {
-      console.log('USER IN .THEN IN HANDLESIGNUP:', user);
-      res.status(200).send(user);
-    }).catch(next);
+  const responseBody = {
+    token,
+    newUser,
+  };
+
+  res.status(200).send(responseBody);
+
+  // CAN PUT THE ABOVE IN A TRY CATCH BLOCK, TO ACCOUNT FOR ERROR
 
 }
 
@@ -43,6 +47,9 @@ function handleSignin(req, res, next) {
 
   // the middleware does some things and its usually attached to the request (when the middleware function itself tells it to carry on)
   res.cookie('auth', req.token);
+  res.set('token', req.token);
+
+  
   
   res.status(200).send({
     token: req.token,
@@ -67,6 +74,14 @@ function getAllUsers(req, res, next) {
 
 
 function handleOAuth(req, res, next){
+// we get here when handshaking process has completed in mw oauth method
+// need our users model to be able to create a new account for authenticated user, or retrieve an existing account if its a returning user
+
+  // do a lookup for an account by email or username
+  // if found, return it
+  // if not, create a new account for user and return that
+
+  let email = req.
 
   res.status(200).send(req.token);
 
