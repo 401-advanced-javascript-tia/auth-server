@@ -42,7 +42,7 @@ describe('Auth Router', () => {
 
         expect(id).toBeDefined();
 
-        // expect(token.role).toBe(userType);
+        expect(token.role).toBe(userType);
 
       });
 

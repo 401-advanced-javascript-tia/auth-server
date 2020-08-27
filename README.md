@@ -17,7 +17,7 @@ Full-stack JavaScript developer with a diverse background of personal and profes
 - Alex Whan: [GitHub](https://github.com/alex-whan)
 
 ## Version
-1.1.2
+1.2.2
 
 ## Tech Used
 ALL TECH GOES HERE IN LIST FORMAT
@@ -61,3 +61,4 @@ https://app.swaggerhub.com/apis/TiaLow/online-store/0.1#/info -->
 
 ### UML Diagram
 **Phase 1**![UML Diagram](./img/UML3.png)
+**Phase 2**![OAuth UML Diagram](./img/OAuth-UML.jpg)

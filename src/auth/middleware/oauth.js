@@ -69,13 +69,19 @@ async function getRemoteUserInfo(token) {
 
 async function getUser(remoteUser) {
 
+  //SOMETHING IS HAPPENING HERE AND WE ARENT MAKING IT TO STEP 4 IN AUTHORIZE FUNCTION ABOVE
   let userRecord = {
     username: remoteUser.login,
-    password: 'passwordForOAuth',   // Placeholder
+    password: 'passwordForOAuth',
+    email: remoteUser.email,
+    fullname: remoteUser.name,
+    role: 'writer',
   };
 
-  // DO WE NEED TO DO A FIND HERE TO SEE IF THE USER ALREADY EXISTS, BEFORE WE SAVE IT? OR IS THIS TAKEN CARE OF IN HANDLEOAUTH IN ROUTER.JS?
-  let user = await users.save(userRecord);
+  console.log('USERRECORD IN GETUSER FUNCTION:', userRecord);
+
+  let user = await users.create(userRecord);
+  console.log('-------- USER IN GETUSER, BEFORE GENERATE TOKEN', user);
   let token = users.generateToken(user);
 
   return [user, token];

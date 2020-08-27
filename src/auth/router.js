@@ -74,25 +74,8 @@ function getAllUsers(req, res, next) {
 
 
 function handleOAuth(req, res, next){
-// we get here when handshaking process has completed in mw oauth method
-// need our users model to be able to create a new account for authenticated user, or retrieve an existing account if its a returning user
-
-  // do a lookup for an account by email or username
-  // if found, return it
-  // if not, create a new account for user and return that
-
-  let email = req.
-
   res.status(200).send(req.token);
-
 }
-
-
-
-
-
-
-
 
 
 module.exports = router;
