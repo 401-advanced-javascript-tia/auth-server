@@ -9,14 +9,14 @@ const jwt = require('jsonwebtoken');
 const users = new mongoose.Schema({
   username: {type: String, required: true, unique: true},
   password: {type: String, required: true},
-  email: {type: String},
+  email: {type: String, unique: true},
   fullname: {type: String},
   role: {type: String, required: true, default: 'user', enum: ['admin', 'editor', 'writer', 'user']},
 });
 
 // username="tlow" password="PaSSwOr$" email="lowtia@gmail.com" fullname="tia low" role="writer"
 
-// HOW TO MODIFY USER INSTANCE BEFORE SAVING??
+// THE BELOW MODIFIES THE INSTANCE BEFORE IT'S SAVED
 // PASSWORD, WHEN IT MAKES IT INTO DATABASE, IS IN SAFE FORM. NO RAW PASSWORDS INTO DB.
 // below is also called hashPassword sometimes (this.hashPassword)
 
@@ -28,35 +28,114 @@ users.pre('save', async function() {
 
 // STATIC ATTACHMENT
 // the definiton of the function is below, and its being called in basic.js in middleware
-users.statics.authenticateBasic = function (username, password) {
+users.statics.authenticateBasic = async function (username, password) {
 
   let query = { username };
   // is the same as = {username:username}
   // hey collection, do you even have anyone by this username??
   // go look for this user query and then user coming back will either be the one they found, and if user doesnt exist then it will come back as null
-  return this.findOne(query)
-    .then(user => user && user.comparePassword(password))
-  // the above, if user comes back truthy then compare the password
-    .catch(console.error);
+  // return this.findOne(query)
+  //   .then(user => user && user.comparePassword(password))
+  // // the above, if user comes back truthy then compare the password
+  //   .catch(console.error);
+
+
+  const user = await this.findOne(query);
+  return user && await user.comparePassword(password);
 
 };
 
 // its a .method becuase were talking about something tied to a particular user
-users.methods.comparePassword = function(plainPassword) {
+users.methods.comparePassword = async function(plainPassword) {
 
-  console.log('PLAIN PASSWORD IN COMPAREPASSWORD FUNCTION IN USERS-MODEL', plainPassword);
-  
-  return bcrypt.compare(plainPassword, this.password)
-    .then(validBoolean => validBoolean? this : null)
-    .catch(console.error);
+  console.log('PLAIN PASSWORD IN COMPAREPASSWORD FUNCTION IN USERS-MODEL.JS:', plainPassword);
+
+  const passwordMatch = await bcrypt.compare(plainPassword, this.password);
+  return passwordMatch ? this : null;
+
 };
 
-// STATIC METHOD, BUT IT TAKES IN THE ARGUMENT FOR ONE USER 
-users.statics.generateToken = function(user) {
 
-  let token = jwt.sign({ username: user.username }, process.env.SECRET);
+users.methods.generateToken = function() {
+
+  const payload = {
+    username: this.username,
+    id: this._id,
+    role: this.role,
+  };
+
+  const token = jwt.sign(payload, process.env.SECRET);
+
+
+  // THE BELOW IS HOW WE WOULD PUT EXTRA SECURITY MEASURES IN!!!!
+  // let options = {};
+  // return jwt.sign(payload, process.env.SECRET, options);
+  //       |
+  // if(SINGLE_USE_TOKENS){
+  //   usedTokens.add(token);
+  // }
+
+
+  console.log('TOKEN IN GENERATETOKEN METHOD:', token);
   return token;
+  // we're testing this by using the verify (jwt.verify) method 
 
+};
+
+
+
+
+users.statics.authenticateToken = async function(token) {
+
+  // return Promise.resolve('funnnnn');
+  // above was for testing purposes
+
+
+  let parsedToken = jwt.verify(token, process.env.SECRET);
+
+  console.log('TOKEN OBJ IN AUTHENTICATE TOKEN:', parsedToken);
+
+  const foundUser = await users.findById(parsedToken.id);
+
+  if(foundUser){
+    return foundUser;
+  } else {
+    throw new Error('User not found');
+  }
+
+  // return this.findById(parsedToken.id);
+
+
+
+  //CHECK OUT TOKENOBJECT
+  // FIND A USER BY SOMETHING IN TOKENOBJECT. CHECK OUT AUTHENTICATE BASIC FUNCTION ABOVE
+  // CHECK OUT TESTS TO SEE IF THIS IS WORKING
+
+  // IF ITS VALID USE IT TO LOOK UP THE USER BY THE ID IN THE TOKEN AND RETURN IT (SEE LAB DEETS)
+
+  
+};
+
+
+
+users.statics.createFromOauth = async function(userRecordObj) {
+
+  if(!userRecordObj){
+
+    return Promise.reject('Validation Error');
+  }
+
+  // you should be querying by something that is definitely unique (this is put in your schema as unique: true)
+  const query = {username: userRecordObj.username};
+  const user = await this.findOne(query);
+
+  // NEED TO ALSO SAY IF(!USER){THROW NER ERROR('USER NOT FOUND)}
+  if (user) {
+    return user;
+  } else {
+    return this.create({username: userRecordObj.username, password: 'none', email: userRecordObj.email});
+    // .create method does a save under the hood so it hits the save hook above on the way
+  }
 };
 
 

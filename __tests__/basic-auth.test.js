@@ -1,62 +1,110 @@
 'use strict';
 
-const supergoose = require('@code-fellows/supergoose');
+require('@code-fellows/supergoose');
 // require('./supergoose.test.js');
 const auth = require('../src/auth/middleware/basic.js');
 const Users = require('../src/auth/models/users-model.js');
 process.env.SECRET = 'superSecretStuff';
 
-beforeEach(async (done) => {
-  await new Users({ username: 'admin', password: 'password', email: 'admin@admin.com', fullname: 'susan mcsuserson', role: 'admin' }).save();
-  done();
+beforeAll(async () => {
+  const adminUserData = { username: 'admin', password: 'password', email: 'admin@admin.com', fullname: 'susan mcsuserson', role: 'admin' };
+
+  await Users(adminUserData).save();
 });
 
+describe('user authentication', () => {
 
-describe('Auth Middleware', () => {
+  let errorObject = {'message': 'Invalid User ID/Password', 'status': 401, 'statusMessage': 'Unauthorized'};
 
-  // let errorObject = {'message': 'Invalid User ID/Password', 'status': 401, 'statusMessage': 'Unauthorized'};
+  it('fails a login for a user (admin) with the incorrect basic credentials', async () => {
 
-  describe('user authentication', () => {
+    // admin:foo: YWRtaW46Zm9v
 
-    // -----------------------------------------------------------------
-    //  THESE TESTS PASS ONLY WHEN THEY'RE BEING RUN INDIVIDUALLY
-    // -----------------------------------------------------------------
+    let req = {
+      headers: {
+        authorization: 'Basic YWRtaW46Zm9v',
+      },
+    };
 
+    let res = {};
 
-    it('fails a login for a user (admin) with the incorrect basic credentials', async () => {
+    let next = jest.fn();
 
-      let req = {
-        headers: {
-          authorization: 'Basic YWRtaW46Zm9v',
-        },
-      };
+    await auth(req, res, next);
 
-      let res = {};
-      let next = jest.fn();
+    expect(next).toHaveBeenCalledWith(errorObject);
 
-      await auth(req, res, next);
+  });
 
-      expect(next).toHaveBeenCalledWith('Invalid Login');
+  it('logs in an admin user with the right credentials', async () => {
 
-    });
+    // admin:password: YWRtaW46cGFzc3dvcmQ=
 
-    
-    it('logs in an admin user with the right credentials', async () => {
+    let req = {
+      headers: {
+        authorization: 'Basic YWRtaW46cGFzc3dvcmQ=',
+      },
+    };
 
-      let req = {
-        headers: {
-          authorization: 'Basic YWRtaW46cGFzc3dvcmQ=',
-        },
-      };
-      let res = {};
-      let next = jest.fn();
+    let res = {};
 
-      await auth(req,res,next);
+    let next = jest.fn();
 
-      expect(next).toHaveBeenCalledWith();
+    await auth(req, res, next);
 
-    });
+    expect(next).toHaveBeenCalledWith();
 
   });
 
 });
+
+
+
+// describe('Auth Middleware', () => {
+
+//   // let errorObject = {'message': 'Invalid User ID/Password', 'status': 401, 'statusMessage': 'Unauthorized'};
+
+//   describe('user authentication', () => {
+
+//     // -----------------------------------------------------------------
+//     //  THESE TESTS PASS ONLY WHEN THEY'RE BEING RUN INDIVIDUALLY
+//     // -----------------------------------------------------------------
+
+
+//     it('fails a login for a user (admin) with the incorrect basic credentials', async () => {
+
+//       let req = {
+//         headers: {
+//           authorization: 'Basic YWRtaW46Zm9v',
+//         },
+//       };
+
+//       let res = {};
+//       let next = jest.fn();
+
+//       await auth(req, res, next);
+
+//       expect(next).toHaveBeenCalledWith('Invalid Login');
+
+//     });
+
+    
+//     it('logs in an admin user with the right credentials', async () => {
+
+//       let req = {
+//         headers: {
+//           authorization: 'Basic YWRtaW46cGFzc3dvcmQ=',
+//         },
+//       };
+//       let res = {};
+//       let next = jest.fn();
+
+//       await auth(req,res,next);
+
+//       expect(next).toHaveBeenCalledWith();
+
+//     });
+
+//   });
+
+// });

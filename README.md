@@ -1,6 +1,7 @@
 # Auth-Server
 Code 401 Lab 11-14 Project
-**Description**: 
+**Description**
+Four-day build out of an authentication server.
 
 ## See the Site
 IF SITE IS PUBLISHED PUT THE LINK HERE
@@ -16,7 +17,7 @@ Full-stack JavaScript developer with a diverse background of personal and profes
 - Alex Whan: [GitHub](https://github.com/alex-whan)
 
 ## Version
-1.1.2
+1.2.2
 
 ## Tech Used
 ALL TECH GOES HERE IN LIST FORMAT
@@ -29,7 +30,7 @@ ALL TECH GOES HERE IN LIST FORMAT
 - GITHUB_CLIENT_SECRET=
 
 ## Domain Modeling
-- MongoDB name: products
+- MongoDB name: users
 
 ## Daily Log
 Monday : 8-24-20 : **Phase 1** : **Basic Authentication**
@@ -60,3 +61,4 @@ https://app.swaggerhub.com/apis/TiaLow/online-store/0.1#/info -->
 
 ### UML Diagram
 **Phase 1**![UML Diagram](./img/UML3.png)
+**Phase 2**![OAuth UML Diagram](./img/OAuth-UML.jpg)

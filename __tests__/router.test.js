@@ -6,72 +6,62 @@ const jwt = require('jsonwebtoken');
 
 const {server} = require('../src/server.js');
 const supergoose = require('@code-fellows/supergoose');
-// const { describe } = require('yargs');
-// const { italic } = require('chalk');
+
 require('dotenv').config();
 
 const mockRequest = supergoose(server);
 
+let users = {
+  admin: { username: 'admin', password: 'password', role: 'admin' },
+  editor: { username: 'editor', password: 'password', role: 'editor' },
+  user: { username: 'user', password: 'password', role: 'user' },
+};
 
-describe('user signup/signin', () => {
+describe('Auth Router', () => {
 
+  Object.keys(users).forEach(userType => {
 
-  it('can signup', async () => {
+    describe(`${userType} users`, () => {
 
-    const userData = { username: 'admin', password: 'password', email: 'admin@admin.com', fullname: 'susan mcsuserson', role: 'admin' };
+      let id;
 
-    const results = await mockRequest.post('/signup').send(userData);
+      it('can create one', async () => {
 
-    expect(results.statusCode).toBe(200);
+        const results = await mockRequest.post('/signup').send(users[userType]);
 
+        // console.log('RESULTS IN CAN CREATE ONE TEST:', results.body);
+
+        expect(results.body.newUser).toBeDefined();
+        expect(results.body.token).toBeDefined();
+
+        const token = jwt.verify(results.body.token, process.env.SECRET);
+
+        // console.log('TOKEN IN CREAT ONE TEST:', token);
+
+        id = token.id;
+
+        expect(id).toBeDefined();
+
+        expect(token.role).toBe(userType);
+
+      });
+
+      it('can signin with basic', async () => {
+
+        const { username } = users[userType];
+        const { password } = users[userType];
+
+        const results = await mockRequest
+          .post('/signin').auth(username, password);
+
+        const token = jwt.verify(results.body.token, process.env.SECRET);
+
+        expect(token.id).toEqual(id);
+
+        expect(token.role).toBe(userType);
+
+      });
+    });
   });
-
-  it('can signin with basic', async () => {
-
-    const userData = { username: 'joey', password: 'password', email: 'admin@admin.com', role: 'admin' };
-
-    await mockRequest.post('/signup').send(userData);
-
-    const results = await mockRequest.post('/signin').auth('joey', 'password');
-
-    const parsedToken = JSON.parse(results.text).token;
-
-    const token = jwt.verify(parsedToken, process.env.SECRET);
-
-    expect(token).toBeDefined();
-
-  });
-
-
-  
-  it('can fail signin with bad password', async () => {
-
-    const userData = { username: 'joey', password: 'password', role: 'admin', email: 'admin@admin.com' };
-
-    await mockRequest.post('/signup').send(userData);
-
-    const results = await mockRequest.post('/signin').auth('joey', 'badpassword');
-
-    expect(results.statusCode).toBe(500);
-
-  });
-
-  //passing
-  it('can fail signin with unknown user', async () => {
-
-    const userData = { username: 'joey', password: 'password', role: 'admin', email: 'admin@admin.com' };
-
-    await mockRequest.post('/signup').send(userData);
-
-    const results = await mockRequest.post('/signin').auth('nobody', 'password');
-
-    expect(results.statusCode).toBe(500);
-
-  });
-
-
-
-
 });
-
 
