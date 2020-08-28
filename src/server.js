@@ -3,7 +3,8 @@
 const express = require('express');
 require('dotenv').config();
 const app = express();
-const routes = require('./auth/router.js');
+const router = require('./auth/router.js');
+const extraRouter = require('./auth/extra-routes.js');
 const error404 = require('./middleware/404.js');
 const error500 = require('./middleware/500.js');
 
@@ -17,12 +18,12 @@ app.use(express.json());
 
 
 // DO WE NEED '/' IN HERE?
-app.use(routes);
+app.use(router);
+app.use(extraRouter);
 
 
 app.use('*', error404);
 app.use(error500);
-
 
 
 

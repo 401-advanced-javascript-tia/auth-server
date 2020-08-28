@@ -28,10 +28,10 @@ router.get('/oauth', oauthMW, handleOAuth);
 async function handleSignup(req, res, next) {
 
   // console.log('BOOYAH IM IN HANDLESIGNUP!!!');
+  console.log('REQ.BODY IN HANDLESIGNUP:', req.body);
 
   const newUser = await usersModel.create(req.body);
 
-  // console.log('REQ.BODY IN HANDLESIGNUP:', req.body);
 
   const token = newUser.generateToken();
 

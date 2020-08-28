@@ -1,5 +1,6 @@
 # Auth-Server
 Code 401 Lab 11-14 Project
+
 **Description**
 Four-day build out of an authentication server.
 
@@ -15,9 +16,10 @@ Full-stack JavaScript developer with a diverse background of personal and profes
 ## Collaborations and Resources
 - Joshua Beasley : [GitHub](https://github.com/beasleyDOTcom)
 - Alex Whan: [GitHub](https://github.com/alex-whan)
+- Joe Zabaleta: [GitHub](https://github.com/joseph-zabaleta)
 
 ## Version
-1.2.2
+1.3.1
 
 ## Tech Used
 ALL TECH GOES HERE IN LIST FORMAT
@@ -28,6 +30,7 @@ ALL TECH GOES HERE IN LIST FORMAT
 - SECRET=
 - GITHUB_CLIENT_ID=
 - GITHUB_CLIENT_SECRET=
+- TEST_TOKEN= (for testing purposes)
 
 ## Domain Modeling
 - MongoDB name: users
@@ -46,13 +49,15 @@ Tuesday : 8-25-20 : **Phase 2** : **OAuth**
 - Create or validate a local user account matching the remote user id
 - Return a JSON Web Token on valid sign in attempts
 
-Wednesday : 8-26-20 : **Phase 3** : **Bearer Authentication**
+Wednesday : 8-26-20 : **Phase 2 cont.**
+
+Thursday : 8-27-20 : **Phase 3** : **Bearer Authentication**
 - Re-Authenticate Users
 - Accepts a TOKEN in the **Authorization: Bearer** header
 - Validates the user
 - Allows or Denies access to the route handler
 
-Thursday : 8-27-20 : **Phase 4** : **Authorization**
+Friday : 8-28-20 : **Phase 4** : **Authorization**
 - Implement a Role Based Authorization System
 - Combine the Bearer Token with User roles to give fine grained access control
 
@@ -62,3 +67,5 @@ https://app.swaggerhub.com/apis/TiaLow/online-store/0.1#/info -->
 ### UML Diagram
 **Phase 1**![UML Diagram](./img/UML3.png)
 **Phase 2**![OAuth UML Diagram](./img/OAuth-UML.jpg)
+**Phase 3**![Bearer Token UML Diagram](./img/BT-UML.jpg)
+
