@@ -4,7 +4,7 @@ const express = require('express');
 const router = express.Router();
 const basicAuthMW = require('./middleware/basic.js');
 const oauthMW = require('./middleware/oauth.js');
-
+const bearerAuthMW = require('./middleware/bearer.js');
 const usersModel = require('./models/users-model.js');
 
 
@@ -12,9 +12,13 @@ const usersModel = require('./models/users-model.js');
 router.post('/signup', handleSignup);
 router.post('/signin', basicAuthMW, handleSignin);
 // basicAuthMW is middleware
-router.get('/users', getAllUsers);
+
+router.get('/users', bearerAuthMW, getAllUsers);
+
+// router.get('/users', getAllUsers);
 
 // oauth is the mw that handles the handshaking, handleOAuth route that receives code from OAuth server
+// the /oauth route is whats provided as the redirect to the oauth provider (github in this case)
 router.get('/oauth', oauthMW, handleOAuth);
 
 
@@ -74,7 +78,7 @@ function getAllUsers(req, res, next) {
 
 
 function handleOAuth(req, res, next){
-  res.status(200).send(req.token);
+  res.status(200).send(`chyeahhhh you got that token!  ${req.token}`);
 }
 
 

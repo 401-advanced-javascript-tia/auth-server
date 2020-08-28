@@ -7,7 +7,7 @@
 // Add the token and the user record to the request object
 
 const superagent = require('superagent');
-const users = require('../models/users-model.js');
+const Users = require('../models/users-model.js');
 require('dotenv').config();
 
 // ----------   https://developer.github.com/apps/building-oauth-apps/
@@ -70,6 +70,8 @@ async function getRemoteUserInfo(token) {
 async function getUser(remoteUser) {
 
   //SOMETHING IS HAPPENING HERE AND WE ARENT MAKING IT TO STEP 4 IN AUTHORIZE FUNCTION ABOVE
+
+  // DO WE CAN ABOUT SAVING ALL OF THE BELOW, SINCE IT CORRELATES TO OUR SCHEMA? OR JUST USERNAME AND PASSWORD? 
   let userRecord = {
     username: remoteUser.login,
     password: 'passwordForOAuth',
@@ -80,9 +82,9 @@ async function getUser(remoteUser) {
 
   console.log('USERRECORD IN GETUSER FUNCTION:', userRecord);
 
-  let user = await users.create(userRecord);
+  let user = await Users.createFromOauth(userRecord);
   console.log('-------- USER IN GETUSER, BEFORE GENERATE TOKEN', user);
-  let token = users.generateToken(user);
+  let token = user.generateToken();
 
   return [user, token];
 }

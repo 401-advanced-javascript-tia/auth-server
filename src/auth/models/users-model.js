@@ -9,14 +9,14 @@ const jwt = require('jsonwebtoken');
 const users = new mongoose.Schema({
   username: {type: String, required: true, unique: true},
   password: {type: String, required: true},
-  email: {type: String},
+  email: {type: String, unique: true},
   fullname: {type: String},
   role: {type: String, required: true, default: 'user', enum: ['admin', 'editor', 'writer', 'user']},
 });
 
 // username="tlow" password="PaSSwOr$" email="lowtia@gmail.com" fullname="tia low" role="writer"
 
-// HOW TO MODIFY USER INSTANCE BEFORE SAVING??
+// THE BELOW MODIFIES THE INSTANCE BEFORE IT'S SAVED
 // PASSWORD, WHEN IT MAKES IT INTO DATABASE, IS IN SAFE FORM. NO RAW PASSWORDS INTO DB.
 // below is also called hashPassword sometimes (this.hashPassword)
 
@@ -65,27 +65,75 @@ users.methods.generateToken = function() {
   };
 
   const token = jwt.sign(payload, process.env.SECRET);
+
+
+  // THE BELOW IS HOW WE WOULD PUT EXTRA SECURITY MEASURES IN!!!!
+  // let options = {};
+  // return jwt.sign(payload, process.env.SECRET, options);
+  //       |
+  // if(SINGLE_USE_TOKENS){
+  //   usedTokens.add(token);
+  // }
+
+
   console.log('TOKEN IN GENERATETOKEN METHOD:', token);
   return token;
   // we're testing this by using the verify (jwt.verify) method 
 
 };
 
-users.statics.createFromOauth = async function(email) {
 
-  if(!email){
-    // throw new Error('Validation Error');
+
+
+users.statics.authenticateToken = async function(token) {
+
+  // return Promise.resolve('funnnnn');
+  // above was for testing purposes
+
+
+  let parsedToken = jwt.verify(token, process.env.SECRET);
+
+  console.log('TOKEN OBJ IN AUTHENTICATE TOKEN:', parsedToken);
+
+  const foundUser = await users.findById(parsedToken.id);
+
+  if(foundUser){
+    return foundUser;
+  } else {
+    throw new Error('User not found');
+  }
+
+  // return this.findById(parsedToken.id);
+
+
+
+  //CHECK OUT TOKENOBJECT
+  // FIND A USER BY SOMETHING IN TOKENOBJECT. CHECK OUT AUTHENTICATE BASIC FUNCTION ABOVE
+  // CHECK OUT TESTS TO SEE IF THIS IS WORKING
+
+  // IF ITS VALID USE IT TO LOOK UP THE USER BY THE ID IN THE TOKEN AND RETURN IT (SEE LAB DEETS)
+
+  
+};
+
+
+
+users.statics.createFromOauth = async function(userRecordObj) {
+
+  if(!userRecordObj){
+
     return Promise.reject('Validation Error');
   }
 
-  const query = {email};
+  // you should be querying by something that is definitely unique (this is put in your schema as unique: true)
+  const query = {username: userRecordObj.username};
   const user = await this.findOne(query);
-  // return user ? user : null;
 
+  // NEED TO ALSO SAY IF(!USER){THROW NER ERROR('USER NOT FOUND)}
   if (user) {
     return user;
   } else {
-    return this.create({username: email, password: 'none', email: email});
+    return this.create({username: userRecordObj.username, password: 'none', email: userRecordObj.email});
     // .create method does a save under the hood so it hits the save hook above on the way
   }
 };

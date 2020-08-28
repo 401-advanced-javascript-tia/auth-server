@@ -17,17 +17,19 @@
   let URL = "https://github.com/login/oauth/authorize";
   
   let options = {
-    client_id: '',
+    client_id: '9f7a297fc8e9e285a59e',
     redirect_uri: 'http://localhost:3000/oauth',
     scope: 'read:user',
     state: 'statewords'
   }
 
   let QueryString = Object.keys(options).map((key) => {
-    return `${key}=` + encodedURIComponent(options[key]);
+    return `${key}=` + encodeURIComponent(options[key]);
   }).join('&');
 
   let authURL = `${URL}?${QueryString}`;
+
+  console.log('authURL IN INDEX:', authURL);
 
   let link = document.getElementById('oauth');
   link.setAttribute('href', authURL);
