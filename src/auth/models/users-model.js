@@ -1,7 +1,5 @@
 'use strict';
 
-// THIS WILL GET HOOKED UP THE WAY OUR OTHER MODELS GOT HOOKED UP
-
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -34,11 +32,6 @@ users.statics.authenticateBasic = async function (username, password) {
   // is the same as = {username:username}
   // hey collection, do you even have anyone by this username??
   // go look for this user query and then user coming back will either be the one they found, and if user doesnt exist then it will come back as null
-  // return this.findOne(query)
-  //   .then(user => user && user.comparePassword(password))
-  // // the above, if user comes back truthy then compare the password
-  //   .catch(console.error);
-
 
   const user = await this.findOne(query);
   return user && await user.comparePassword(password);
@@ -87,32 +80,20 @@ users.methods.generateToken = function() {
 
 users.statics.authenticateToken = async function(token) {
 
-  // return Promise.resolve('funnnnn');
-  // above was for testing purposes
-
-
   let parsedToken = jwt.verify(token, process.env.SECRET);
 
   console.log('TOKEN OBJ IN AUTHENTICATE TOKEN:', parsedToken);
 
-  const foundUser = await users.findById(parsedToken.id);
+  const foundUser = await this.findById(parsedToken.id);
+  // return this.findById(parsedToken.id);
+
+  console.log('FOUNDUSER IN AUTHENTICATE TOKEN:', foundUser);
 
   if(foundUser){
     return foundUser;
   } else {
     throw new Error('User not found');
   }
-
-  // return this.findById(parsedToken.id);
-
-
-
-  //CHECK OUT TOKENOBJECT
-  // FIND A USER BY SOMETHING IN TOKENOBJECT. CHECK OUT AUTHENTICATE BASIC FUNCTION ABOVE
-  // CHECK OUT TESTS TO SEE IF THIS IS WORKING
-
-  // IF ITS VALID USE IT TO LOOK UP THE USER BY THE ID IN THE TOKEN AND RETURN IT (SEE LAB DEETS)
-
   
 };
 
