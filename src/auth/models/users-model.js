@@ -77,7 +77,6 @@ users.methods.generateToken = function() {
 
 
 
-
 users.statics.authenticateToken = async function(token) {
 
   let parsedToken = jwt.verify(token, process.env.SECRET);
