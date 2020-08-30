@@ -10,6 +10,7 @@ module.exports = async (req, res, next) => {
     return;
   }
 
+  // here we're pulling out the encoded part by splitting the header into an array on the space, and then popping off the second element
   let token = req.headers.authorization.split(' ').pop();
 
   try {
@@ -19,6 +20,13 @@ module.exports = async (req, res, next) => {
     console.log('VALIDUSER IN BEARER.JS:', validUser);
 
     req.user = validUser;
+
+    // req.user = {
+    //   username: validUser.username,
+    //   fullname: validUser.fullname,
+    //   email: validUser.email,
+    //   capabilities: validUser.capabilities,
+    // };
 
     next();
   

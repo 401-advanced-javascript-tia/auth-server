@@ -58,6 +58,7 @@ Thursday : 8-27-20 : **Phase 3** : **Bearer Authentication**
 - Allows or Denies access to the route handler
 
 Friday : 8-28-20 : **Phase 4** : **Authorization**
+- CHANGED MONGODB_URI TO /AUTH-SERVER (FROM USERS)
 - Implement a Role Based Authorization System
 - Combine the Bearer Token with User roles to give fine grained access control
 
