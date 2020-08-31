@@ -4,15 +4,20 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
+// const SINGLE_USE_TOKENS = false;// !!process.env.SINGLE_USE_TOKENS;
+// const TOKEN_EXPIRE = process.env.TOKEN_EXPIRE || '60m';
+// const SECRET = process.env.SECRET || 'supersecret';
+
+// const usedTokens = new Set();
+
 const users = new mongoose.Schema({
   username: {type: String, required: true, unique: true},
   password: {type: String, required: true},
-  email: {type: String, unique: true},
   fullname: {type: String},
+  email: {type: String, unique: true},
   role: {type: String, required: true, default: 'user', enum: ['admin', 'editor', 'writer', 'user']},
+  capabilities: { type: Array, required: true, default: [] },
 });
-
-// username="tlow" password="PaSSwOr$" email="lowtia@gmail.com" fullname="tia low" role="writer"
 
 // THE BELOW MODIFIES THE INSTANCE BEFORE IT'S SAVED
 // PASSWORD, WHEN IT MAKES IT INTO DATABASE, IS IN SAFE FORM. NO RAW PASSWORDS INTO DB.
@@ -22,19 +27,58 @@ users.pre('save', async function() {
   if(this.isModified('password')){
     this.password = await bcrypt.hash(this.password, 10);
   }
+
+  let role = this.role; // tthis is where we would adjust if we want to test this out
+
+  // REMOVE THIS FROM LIVE SYSTEM ONCE IVE TESTED!
+  role = 'admin';
+
+
+
+  if(this.isModified('role')) {
+
+    switch(role) {
+    case 'admin':
+      this.capabilities = ['create', 'read', 'update', 'delete'];
+      break;
+    case 'editor':
+      this.capabilities = ['create', 'read', 'update'];
+      break;
+    case 'writer':
+      this.capabilities = ['create', 'read'];
+      break;
+    case 'user':
+      this.capabilities = ['read'];
+      break;
+    }
+  }
+
 });
 
 // STATIC ATTACHMENT
 // the definiton of the function is below, and its being called in basic.js in middleware
 users.statics.authenticateBasic = async function (username, password) {
 
-  let query = { username };
   // is the same as = {username:username}
   // hey collection, do you even have anyone by this username??
   // go look for this user query and then user coming back will either be the one they found, and if user doesnt exist then it will come back as null
+  
+  // let query = { username };
+  // return this.findOne(query)
+  //   .then(user => {
+  //     return user && user.comparePassword(password);
+  //   }).catch(error => {
+  //     throw new Error('Error in authenticateBasic static method');
+  //   })
 
+
+  let query = { username };
   const user = await this.findOne(query);
-  return user && await user.comparePassword(password);
+  try {
+    return user && await user.comparePassword(password);
+  } catch (err){
+    throw new Error('Error in authenticateBasic static method:', err);
+  }
 
 };
 
@@ -52,24 +96,27 @@ users.methods.comparePassword = async function(plainPassword) {
 users.methods.generateToken = function() {
 
   const payload = {
-    username: this.username,
     id: this._id,
     role: this.role,
+    capabilities: this.capabilities,
+    // username: this.username,
+    // id: this._id,
+    // role: this.role,
   };
 
-  const token = jwt.sign(payload, process.env.SECRET);
-
-
-  // THE BELOW IS HOW WE WOULD PUT EXTRA SECURITY MEASURES IN!!!!
+  
+  // if we're using "TYPE" below we need to pass type into the function as a parameter
+  // Additional security measures
   // let options = {};
-  // return jwt.sign(payload, process.env.SECRET, options);
-  //       |
-  // if(SINGLE_USE_TOKENS){
-  //   usedTokens.add(token);
+  // if(type !== 'key' && !!TOKEN_EXPIRE) {
+  //   options = { expiresIn: TOKEN_EXPIRE};
   // }
-
+  
+  const token = jwt.sign(payload, process.env.SECRET);
+  // const token = jwt.sign(payload, process.env.SECRET, options);
 
   console.log('TOKEN IN GENERATETOKEN METHOD:', token);
+
   return token;
   // we're testing this by using the verify (jwt.verify) method 
 
@@ -79,7 +126,16 @@ users.methods.generateToken = function() {
 
 users.statics.authenticateToken = async function(token) {
 
+  // /* Additional Security Measure */
+  // if (usedTokens.has(token)) {
+  //   console.log('unique fail');
+  //   return Promise.reject('Invalid Token');
+  // }
+
   let parsedToken = jwt.verify(token, process.env.SECRET);
+
+  //  /* Additional Security Measure */
+  //  (SINGLE_USE_TOKENS) && parsedToken.type !== 'key' && usedTokens.add(token);
 
   console.log('TOKEN OBJ IN AUTHENTICATE TOKEN:', parsedToken);
 
@@ -101,7 +157,6 @@ users.statics.authenticateToken = async function(token) {
 users.statics.createFromOauth = async function(userRecordObj) {
 
   if(!userRecordObj){
-
     return Promise.reject('Validation Error');
   }
 
@@ -110,13 +165,38 @@ users.statics.createFromOauth = async function(userRecordObj) {
   const user = await this.findOne(query);
 
   // NEED TO ALSO SAY IF(!USER){THROW NER ERROR('USER NOT FOUND)}
-  if (user) {
-    return user;
-  } else {
-    return this.create({username: userRecordObj.username, password: 'none', email: userRecordObj.email});
-    // .create method does a save under the hood so it hits the save hook above on the way
+
+  try {
+    if(!user) {
+      throw new Error('User Not Found');
+    } else {
+      console.log('Welcome Back ', user.username);
+      return user;
+    }
+  } catch (e) {
+    console.log('Creating new user');
+    let username = userRecordObj.username;
+    let password = 'none';
+    let role = 'user';
+    return this.create({username, password, role});
+    // DEMO CODE BELOW
+    // console.log('Creating new user');
+    //   let password = 'phoneybaloney';
+    //   let role = 'user'; // NOTE: change this role to test out different routes
+    //   return this.create({ username, password, role });
+    // OLD CODE BELOW
+    // if (user) {
+    //   return user;
+    // } else {
+    //   return this.create({username: userRecordObj.username, password: 'none', email: userRecordObj.email});
+    //   // .create method does a save under the hood so it hits the save hook above on the way
   }
 };
+
+users.methods.generateKey = function () {
+  return this.generateToken('key');
+};
+
 
 
 module.exports = mongoose.model('users', users);

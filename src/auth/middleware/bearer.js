@@ -21,12 +21,13 @@ module.exports = async (req, res, next) => {
 
     req.user = validUser;
 
-    // req.user = {
-    //   username: validUser.username,
-    //   fullname: validUser.fullname,
-    //   email: validUser.email,
-    //   capabilities: validUser.capabilities,
-    // };
+    // adding key value of capabilities, so bearer auth now has a notion of capabilities
+    req.user = {
+      username: validUser.username,
+      fullname: validUser.fullname,
+      email: validUser.email,
+      capabilities: validUser.capabilities,
+    };
 
     next();
   
