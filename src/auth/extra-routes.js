@@ -8,15 +8,6 @@ const router = express.Router();
 // router.get('/secret', bearerAuthMW, (req,res) => {
 //   res.status(200).send('access allowed');
 // });
-  
-/*
-    - `router.get('/public')` should be visible by anyone
-    - `router.get('/private')` should require only a valid login
-    - `router.get('/readonly')` should require the `read` capability
-    - `router.get('/create)` should require the `create` capability
-    - `router.put('/update)` should require the `update` capability
-    - `router.patch('/delete)` should require the `update` capability
-  */
 
 router.get('/public', routeHandler);
 router.get('/private', bearerAuthMW, routeHandler);

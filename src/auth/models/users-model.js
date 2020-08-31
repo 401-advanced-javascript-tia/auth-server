@@ -31,7 +31,7 @@ users.pre('save', async function() {
   let role = this.role; // tthis is where we would adjust if we want to test this out
 
   // REMOVE THIS FROM LIVE SYSTEM ONCE IVE TESTED!
-  role = 'admin';
+  // role = 'admin';
 
 
 
@@ -179,17 +179,6 @@ users.statics.createFromOauth = async function(userRecordObj) {
     let password = 'none';
     let role = 'user';
     return this.create({username, password, role});
-    // DEMO CODE BELOW
-    // console.log('Creating new user');
-    //   let password = 'phoneybaloney';
-    //   let role = 'user'; // NOTE: change this role to test out different routes
-    //   return this.create({ username, password, role });
-    // OLD CODE BELOW
-    // if (user) {
-    //   return user;
-    // } else {
-    //   return this.create({username: userRecordObj.username, password: 'none', email: userRecordObj.email});
-    //   // .create method does a save under the hood so it hits the save hook above on the way
   }
 };
 

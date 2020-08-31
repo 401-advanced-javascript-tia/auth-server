@@ -13,23 +13,16 @@ const error500 = require('./middleware/500.js');
 app.use(cors());
 app.use(morgan('dev'));
 
-
-
 app.use(express.static('./public'));
 // the below steps in front of all requests, inspects it for body, parses as needed and includes it on the request. turns fragmented body into json format
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-
-
 app.use(router);
 app.use(extraRouter);
 
-
 app.use(error404);
 app.use(error500);
-
-
 
 module.exports = {
   server: app,
