@@ -2,10 +2,7 @@
 Code 401 Lab 11-14 Project
 
 **Description**
-Four-day build out of an authentication server.
-
-## See the Site
-IF SITE IS PUBLISHED PUT THE LINK HERE
+Four-day build out of an authentication server. Utilizes basic authentication, bearer, oauth 2.0, and Access Control List. 
 
 ## Author
 Tia Low
@@ -19,10 +16,7 @@ Full-stack JavaScript developer with a diverse background of personal and profes
 - Joe Zabaleta: [GitHub](https://github.com/joseph-zabaleta)
 
 ## Version
-1.3.1
-
-## Tech Used
-ALL TECH GOES HERE IN LIST FORMAT
+1.5.1
 
 ## ENV SAMPLES
 - PORT=
@@ -34,6 +28,7 @@ ALL TECH GOES HERE IN LIST FORMAT
 
 ## Domain Modeling
 - MongoDB name: users
+- Phase 4 MongoDB: auth-server
 
 ## Daily Log
 Monday : 8-24-20 : **Phase 1** : **Basic Authentication**
@@ -68,5 +63,5 @@ https://app.swaggerhub.com/apis/TiaLow/online-store/0.1#/info -->
 ### UML Diagram
 **Phase 1**![UML Diagram](./img/UML3.png)
 **Phase 2**![OAuth UML Diagram](./img/OAuth-UML.jpg)
-**Phase 3**![Bearer Token UML Diagram](./img/BT-UML.jpg)
+**Phase 3 / 4**![Bearer Token & ACL UML Diagram](./img/BT-ACL-UML.jpg)
 

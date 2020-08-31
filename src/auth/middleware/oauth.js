@@ -69,9 +69,6 @@ async function getRemoteUserInfo(token) {
 
 async function getUser(remoteUser) {
 
-  //SOMETHING IS HAPPENING HERE AND WE ARENT MAKING IT TO STEP 4 IN AUTHORIZE FUNCTION ABOVE
-
-  // DO WE CAN ABOUT SAVING ALL OF THE BELOW, SINCE IT CORRELATES TO OUR SCHEMA? OR JUST USERNAME AND PASSWORD? 
   let userRecord = {
     username: remoteUser.login,
     password: 'passwordForOAuth',
